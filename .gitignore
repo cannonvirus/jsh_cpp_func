@@ -1,0 +1,10 @@
+*.o
+output*.jpg
+build/
+data/
+*.mp4
+*.avi
+!output.jpg
+.vscode
+.txt
+out/
