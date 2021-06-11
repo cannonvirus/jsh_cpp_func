@@ -3,8 +3,13 @@
 #include "my_optical_func.h"
 #include "my_writevideo_func.h"
 
-int main()
-{
+#include <fstream>
+#include <string>
+
+
+int main() {
+
+
     cv::VideoCapture capture(cv::samples::findFile("/works/opticalflow/data/mounting_30min.mp4"));
     if (!capture.isOpened()){
         //error in opening the video input
@@ -14,7 +19,6 @@ int main()
 
     MyWriteVideo writevideo_object(60, true, 1280, 720);
     
-
     int i = 0;
 
     while(true) {
@@ -23,6 +27,7 @@ int main()
         capture >> img;
         //! 항상 30프레임 고정
 
+        // ANCHOR : 이 코드 대신에 Deeplearning에서 나온 output을 이용하여 vector 생성 후 toss
         std::vector<My_Object_Info> cow_info_vec;
         for(int i=1;i<5;i++) {
             My_Object_Info cow;
@@ -37,6 +42,7 @@ int main()
             cow.mounting_ox = 0;
             cow_info_vec.emplace_back(cow);
         }
+        // ======================================================================================
         
         if (i < 600) {
             writevideo_object.Normal_Update(img, cow_info_vec);
@@ -48,7 +54,8 @@ int main()
             writevideo_object.Record_Making(img, cow_info_vec);
             if (writevideo_object.Buffer_Full_Status() == true) {
                 std::string file_name = "/works/opticalflow/out/output_test2_30.mp4";
-                writevideo_object.My_GetVideo(file_name, 30);
+                std::string txt_path = "/works/opticalflow/out/output_test2_30.txt";
+                writevideo_object.My_GetVideo(file_name, 30, txt_path);
                 break;
             }
         }
