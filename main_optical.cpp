@@ -1,7 +1,19 @@
+// #include <iostream>
+// #include <opencv2/core.hpp>
+// #include <opencv2/highgui.hpp>
+// #include <opencv2/imgproc.hpp>
+// #include <opencv2/videoio.hpp>
+// #include <opencv2/video.hpp>
+// #include <math.h>
 
 //! ---
 #include "my_optical_func.h"
-#include "my_writevideo_func.h"
+
+int i = 0;
+// OpticalImage my_optical_func;
+OpticalImage my_optical_func(640, 480);
+// OpticalImage my_optical_func(640, 480, 0.2, 2, 15, 3, 5, 1.2, 0);
+
 
 int main()
 {
@@ -12,33 +24,14 @@ int main()
         return 0;
     }
 
-    MyWriteVideo writevideo_object;
-
-    int i = 0;
-
-    while(true) {
-        i++;
+    while(true){
+        // ********************************************************************
         cv::Mat img;
         capture >> img;
+        my_optical_func.Update(img);
+        // ********************************************************************
 
-        //! 항상 30프레임 고정
-        
-        if (i < 600) {
-            writevideo_object.Normal_Update(img);
-        }
-        else if (i == 600) {
-            writevideo_object.Record_Start();
-        }
-        else if (i > 600 && i < 850) {
-            writevideo_object.Record_Making(img);
-        }
-        else if (i == 850) {
-            writevideo_object.Record_Finish();
-            std::string file_name = "../data/output_test_60.avi";
-            writevideo_object.My_GetVideo(file_name, 30, 640, 360);
-            break;
-        }
-
+        std::string file_name = "/works/opticalflow/image/output_" + std::to_string(i) + ".jpg";
+        cv::imwrite(file_name, my_optical_func.Get_Flows_bgr());
     }
-
 }
